@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
+// `base` is '/' for local dev/preview; the deploy workflow sets DEPLOY_BASE
+// to '/Take-Two/' so assets resolve under the GitHub Pages project subpath.
 export default defineConfig({
+  base: process.env.DEPLOY_BASE || '/',
   plugins: [
     react(),
     VitePWA({
@@ -19,8 +22,6 @@ export default defineConfig({
         background_color: '#FBF7F0',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
         categories: ['productivity'],
         icons: [
           { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
