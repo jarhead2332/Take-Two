@@ -113,8 +113,37 @@ body {
     border-color 180ms ease;
 }
 
+/* High-visibility resting state for the floating button: a stronger drop
+   shadow plus a gently pulsing gold ring so it's easy to spot and clearly
+   reads as an interactive control on the light background. */
+.lg-glow {
+  border-color: rgba(184, 147, 90, 0.85);
+  animation: lg-ring 2.4s ease-in-out infinite;
+}
+
+@keyframes lg-ring {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 30px rgba(28, 26, 23, 0.4),
+      0 2px 8px rgba(28, 26, 23, 0.3),
+      0 0 0 2px rgba(184, 147, 90, 0.55),
+      0 0 0 6px rgba(184, 147, 90, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 10px 30px rgba(28, 26, 23, 0.4),
+      0 2px 8px rgba(28, 26, 23, 0.3),
+      0 0 0 3px rgba(184, 147, 90, 0.7),
+      0 0 0 12px rgba(184, 147, 90, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lg-press {
     transition-duration: 0ms;
+  }
+  .lg-glow {
+    animation: none;
   }
 }

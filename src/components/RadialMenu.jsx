@@ -234,9 +234,9 @@ export default function RadialMenu({ items, current, onSelect }) {
           }}
           onContextMenu={(e) => e.preventDefault()}
           aria-label={open ? 'Close navigation' : 'Open navigation (long-press and slide)'}
-          className={`lg lg-press${open ? ' lg-red' : ''} absolute inset-0 flex items-center justify-center rounded-full`}
+          className={`lg lg-press ${open ? 'lg-red' : 'lg-ink lg-glow'} absolute inset-0 flex items-center justify-center rounded-full`}
           style={{
-            color: open ? COLORS.card : COLORS.ink,
+            color: COLORS.card,
             touchAction: 'none',
             transform: open ? 'scale(0.9)' : 'scale(1)',
           }}
