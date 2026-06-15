@@ -90,26 +90,7 @@ export default function App() {
           </div>
         </div>
 
-        <nav className="flex-1 p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto">
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            const active = page === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setPage(item.id)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
-                style={{
-                  backgroundColor: active ? '#B8935A22' : 'transparent',
-                  color: active ? COLORS.gold : COLORS.sidebarMuted,
-                }}
-              >
-                <Icon size={16} />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
+        <div className="flex-1" />
 
         {/* Backup */}
         <div className="p-3 border-t hidden sm:block" style={{ borderColor: COLORS.sidebarBorder }}>

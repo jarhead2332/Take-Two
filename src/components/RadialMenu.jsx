@@ -166,12 +166,11 @@ export default function RadialMenu({ items, current, onSelect }) {
           transform: 'translateX(-50%)',
         }}
       >
-        {/* Floating label of the currently targeted page */}
+        {/* Floating label of the currently targeted page — dark glass pill */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold"
+          className="lg lg-ink absolute left-1/2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold"
           style={{
             bottom: RADIUS + 64,
-            backgroundColor: COLORS.ink,
             color: COLORS.card,
             opacity: open ? 1 : 0,
             transform: `translateX(-50%) scale(${open ? 1 : 0.8})`,
@@ -179,15 +178,16 @@ export default function RadialMenu({ items, current, onSelect }) {
             pointerEvents: 'none',
           }}
         >
-          {activeLabel || (dragging ? 'Slide to a page' : 'Pick a page')}
+          <span>{activeLabel || (dragging ? 'Slide to a page' : 'Pick a page')}</span>
         </div>
 
-        {/* Page bubbles */}
+        {/* Page bubbles — liquid glass */}
         {items.map((item, i) => {
           const Icon = item.icon;
           const p = positions[i];
           const isActive = activeIdx === i;
           const isCurrent = item.id === current;
+          const tint = isActive ? ' lg-gold' : isCurrent ? ' lg-ink' : '';
           return (
             <button
               key={item.id}
@@ -197,7 +197,7 @@ export default function RadialMenu({ items, current, onSelect }) {
                 onSelect(item.id);
                 close();
               }}
-              className="absolute flex flex-col items-center justify-center rounded-full border shadow-lg"
+              className={`lg${tint} absolute flex flex-col items-center justify-center rounded-full`}
               style={{
                 left: '50%',
                 top: '50%',
@@ -205,16 +205,14 @@ export default function RadialMenu({ items, current, onSelect }) {
                 height: ITEM,
                 marginLeft: -ITEM / 2,
                 marginTop: -ITEM / 2,
-                backgroundColor: isActive ? COLORS.gold : isCurrent ? COLORS.ink : COLORS.card,
-                borderColor: isActive ? COLORS.gold : COLORS.border,
                 color: isActive ? COLORS.ink : isCurrent ? COLORS.card : COLORS.inkSoft,
                 transform: open
-                  ? `translate(${p.x}px, ${p.y}px) scale(${isActive ? 1.18 : 1})`
+                  ? `translate(${p.x}px, ${p.y}px) scale(${isActive ? 1.2 : 1})`
                   : 'translate(0px, 0px) scale(0.2)',
                 opacity: open ? 1 : 0,
                 transition:
-                  'transform 280ms cubic-bezier(.2,.8,.2,1.2), opacity 200ms, background-color 140ms, color 140ms',
-                transitionDelay: open ? `${i * 24}ms` : '0ms',
+                  'transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms, color 140ms',
+                transitionDelay: open ? `${i * 26}ms` : '0ms',
                 pointerEvents: open && !dragging ? 'auto' : 'none',
                 touchAction: 'none',
               }}
@@ -225,7 +223,7 @@ export default function RadialMenu({ items, current, onSelect }) {
           );
         })}
 
-        {/* Center button */}
+        {/* Center button — liquid glass */}
         <button
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -236,19 +234,16 @@ export default function RadialMenu({ items, current, onSelect }) {
           }}
           onContextMenu={(e) => e.preventDefault()}
           aria-label={open ? 'Close navigation' : 'Open navigation (long-press and slide)'}
-          className="absolute inset-0 flex items-center justify-center rounded-full shadow-xl"
+          className={`lg lg-press${open ? ' lg-red' : ''} absolute inset-0 flex items-center justify-center rounded-full`}
           style={{
-            backgroundColor: open ? COLORS.red : COLORS.ink,
-            color: COLORS.card,
+            color: open ? COLORS.card : COLORS.ink,
             touchAction: 'none',
-            transition: 'background-color 160ms, transform 160ms',
-            transform: open ? 'scale(0.92)' : 'scale(1)',
-            border: `2px solid ${COLORS.gold}`,
+            transform: open ? 'scale(0.9)' : 'scale(1)',
           }}
         >
           <span
             style={{
-              transition: 'transform 220ms cubic-bezier(.2,.8,.2,1.2)',
+              transition: 'transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1)',
               transform: open ? 'rotate(135deg)' : 'rotate(0deg)',
             }}
           >

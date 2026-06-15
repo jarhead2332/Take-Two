@@ -15,3 +15,106 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
+
+/* ---- Liquid Glass ---- */
+/* A frosted, translucent material with a top specular highlight, a bright
+   inner rim, and a soft drop shadow — approximating Apple's Liquid Glass. */
+.lg {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.32) 100%
+  );
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 8px 30px rgba(28, 26, 23, 0.22),
+    0 2px 6px rgba(28, 26, 23, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -8px 16px rgba(28, 26, 23, 0.06);
+}
+
+/* Moving specular sheen across the top — the "wet glass" glint. */
+.lg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    130% 80% at 28% 10%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Refractive light pooling along the bottom edge. */
+.lg::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48%;
+  border-radius: inherit;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Keep button content above the glass overlays. */
+.lg > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Colored glass variants — tint the material while keeping the gloss. */
+.lg-red {
+  background: linear-gradient(
+    135deg,
+    rgba(201, 71, 43, 0.92) 0%,
+    rgba(201, 71, 43, 0.62) 60%,
+    rgba(201, 71, 43, 0.8) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.lg-gold {
+  background: linear-gradient(
+    135deg,
+    rgba(184, 147, 90, 0.95) 0%,
+    rgba(184, 147, 90, 0.6) 60%,
+    rgba(184, 147, 90, 0.85) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.lg-ink {
+  background: linear-gradient(
+    135deg,
+    rgba(28, 26, 23, 0.92) 0%,
+    rgba(46, 42, 36, 0.7) 60%,
+    rgba(28, 26, 23, 0.85) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Springy "liquid" press feedback. */
+.lg-press {
+  transition:
+    transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-press {
+    transition-duration: 0ms;
+  }
+}
