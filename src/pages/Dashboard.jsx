@@ -1,7 +1,8 @@
-import React from 'react';
-import { Camera, CalendarClock, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Camera, CalendarClock, ChevronRight, ChevronDown } from 'lucide-react';
 import { COLORS } from '../theme.js';
-import { ReelCard, StatusBadge } from '../components/ui.jsx';
+import { StatusBadge } from '../components/ui.jsx';
+import EpisodeControls from '../components/EpisodeControls.jsx';
 import { scheduleSortKey } from '../utils.js';
 
 function Stat({ value, label }) {
@@ -17,7 +18,101 @@ function Stat({ value, label }) {
   );
 }
 
-export default function Dashboard({ episodes, footage, questions, schedule, onOpenEpisode, onGoto }) {
+// Episode reel card that expands in place to reveal its editable details.
+function EpisodeCard({ ep, setEpisodes, expanded, onToggle }) {
+  const doneCount = ep.subjects.filter((s) => s.done).length;
+  const total = ep.subjects.length || 1;
+  const pct = Math.round((doneCount / total) * 100);
+
+  return (
+    <div
+      className="rounded-xl border transition-shadow"
+      style={{
+        backgroundColor: COLORS.card,
+        borderColor: COLORS.border,
+        boxShadow: expanded ? '0 10px 28px rgba(28,26,23,0.14)' : '0 2px 8px rgba(28,26,23,0.06)',
+      }}
+    >
+      <button
+        onClick={onToggle}
+        aria-expanded={expanded}
+        className="text-left w-full rounded-xl transition-transform active:scale-[0.99]"
+      >
+        {/* perforated top edge */}
+        <div className="flex justify-between px-4 pt-3" aria-hidden="true">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <span
+              key={i}
+              className="block rounded-full"
+              style={{ width: 6, height: 6, backgroundColor: COLORS.ink, opacity: 0.08 }}
+            />
+          ))}
+        </div>
+
+        <div className="p-5 pt-3">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <div className="text-xs font-mono tracking-widest uppercase" style={{ color: COLORS.gold }}>
+                Episode {ep.num}
+              </div>
+              <h3
+                className="text-xl font-bold leading-tight mt-0.5"
+                style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}
+              >
+                {ep.title}
+              </h3>
+            </div>
+            <ChevronDown
+              size={20}
+              style={{
+                color: COLORS.inkSoft,
+                transition: 'transform 280ms cubic-bezier(.2,.7,.2,1)',
+                transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            />
+          </div>
+
+          <p className="text-sm mb-4" style={{ color: COLORS.inkSoft }}>
+            {ep.focus}
+          </p>
+
+          <div className="flex items-center justify-between mb-2">
+            <StatusBadge status={ep.status} />
+            <span className="text-xs font-mono" style={{ color: COLORS.inkSoft }}>
+              {doneCount}/{ep.subjects.length} interviews
+            </span>
+          </div>
+
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: COLORS.border }}>
+            <div
+              className="h-full rounded-full transition-all"
+              style={{ width: `${pct}%`, backgroundColor: COLORS.red }}
+            />
+          </div>
+        </div>
+      </button>
+
+      {/* Expanding detail panel — animates height via the grid-rows trick */}
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-out"
+        style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+      >
+        <div className="overflow-hidden">
+          <div
+            className="px-5 pb-5 pt-1 border-t mt-1"
+            style={{ borderColor: COLORS.border }}
+          >
+            <EpisodeControls episode={ep} setEpisodes={setEpisodes} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Dashboard({ episodes, setEpisodes, footage, questions, schedule, onGoto }) {
+  const [expandedNum, setExpandedNum] = useState(null);
+
   const sorted = [...episodes].sort((a, b) => a.order - b.order);
   const captured = footage.filter((f) => f.status === 'captured').length;
   const needed = footage.filter((f) => f.status === 'needed');
@@ -50,7 +145,6 @@ export default function Dashboard({ episodes, footage, questions, schedule, onOp
         <Stat value={questionsLeft} label="Open questions remaining" />
       </div>
 
-      {/* Up Next */}
       {upNext.length > 0 && (
         <div className="rounded-xl border mb-8 overflow-hidden" style={{ borderColor: COLORS.border }}>
           <div
@@ -103,9 +197,18 @@ export default function Dashboard({ episodes, footage, questions, schedule, onOp
       <h2 className="text-sm font-semibold uppercase tracking-wide mb-3" style={{ color: COLORS.inkSoft }}>
         Episodes — by completion order
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <p className="text-xs mb-3" style={{ color: COLORS.inkSoft }}>
+        Tap an episode to expand and edit it.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
         {sorted.map((ep) => (
-          <ReelCard key={ep.num} ep={ep} onClick={() => onOpenEpisode(ep.num)} />
+          <EpisodeCard
+            key={ep.num}
+            ep={ep}
+            setEpisodes={setEpisodes}
+            expanded={expandedNum === ep.num}
+            onToggle={() => setExpandedNum((cur) => (cur === ep.num ? null : ep.num))}
+          />
         ))}
       </div>
     </div>

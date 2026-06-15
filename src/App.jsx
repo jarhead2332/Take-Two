@@ -14,19 +14,19 @@ import FootageLog from './pages/FootageLog.jsx';
 import SchedulePage from './pages/SchedulePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
 import OpenQuestionsPage from './pages/OpenQuestionsPage.jsx';
+import RadialMenu from './components/RadialMenu.jsx';
 
 const NAV = [
-  { id: 'dashboard', label: 'Dashboard', icon: Clapperboard },
-  { id: 'episodes', label: 'Episodes', icon: Film },
-  { id: 'footage', label: 'Footage Log', icon: Camera },
-  { id: 'schedule', label: 'Interview Schedule', icon: CalendarDays },
-  { id: 'team', label: 'Team', icon: Users },
-  { id: 'questions', label: 'Open Questions', icon: ListChecks },
+  { id: 'dashboard', label: 'Dashboard', short: 'Home', icon: Clapperboard },
+  { id: 'episodes', label: 'Episodes', short: 'Eps', icon: Film },
+  { id: 'footage', label: 'Footage Log', short: 'Footage', icon: Camera },
+  { id: 'schedule', label: 'Interview Schedule', short: 'Sched', icon: CalendarDays },
+  { id: 'team', label: 'Team', short: 'Team', icon: Users },
+  { id: 'questions', label: 'Open Questions', short: 'Q&A', icon: ListChecks },
 ];
 
 export default function App() {
   const [page, setPage] = useState('dashboard');
-  const [focusEpisode, setFocusEpisode] = useState(null);
 
   const [episodes, setEpisodes] = useLocalStorage('episodes', SEED_EPISODES);
   const [footage, setFootage] = useLocalStorage('footage', SEED_FOOTAGE);
@@ -35,11 +35,6 @@ export default function App() {
   const [questions, setQuestions] = useLocalStorage('questions', SEED_QUESTIONS);
 
   const fileRef = useRef(null);
-
-  const openEpisode = (num) => {
-    setFocusEpisode(num);
-    setPage('episodes');
-  };
 
   const exportData = () => {
     const payload = { episodes, footage, schedule, team, questions, exportedAt: new Date().toISOString() };
@@ -79,7 +74,14 @@ export default function App() {
         className="sm:w-64 sm:min-h-screen border-b sm:border-b-0 sm:border-r flex flex-col"
         style={{ backgroundColor: COLORS.sidebar, borderColor: COLORS.sidebarBorder }}
       >
-        <div className="p-5 border-b" style={{ borderColor: COLORS.sidebarBorder }}>
+        <div
+          className="px-5 pb-5 border-b"
+          style={{
+            borderColor: COLORS.sidebarBorder,
+            // Clear the iPhone status bar / notch in standalone PWA mode.
+            paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.25rem)',
+          }}
+        >
           <div className="text-xs font-mono tracking-widest uppercase" style={{ color: COLORS.gold }}>
             Episode Tracker
           </div>
@@ -139,31 +141,29 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 p-5 sm:p-8 max-w-5xl">
+      {/* Main — extra bottom padding so content clears the floating menu */}
+      <main className="flex-1 p-5 sm:p-8 max-w-5xl pb-32">
         {page === 'dashboard' && (
           <Dashboard
             episodes={episodes}
+            setEpisodes={setEpisodes}
             footage={footage}
             questions={questions}
             schedule={schedule}
-            onOpenEpisode={openEpisode}
             onGoto={setPage}
           />
         )}
         {page === 'episodes' && (
-          <EpisodesPage
-            episodes={episodes}
-            setEpisodes={setEpisodes}
-            focusNum={focusEpisode}
-            onFocusHandled={() => setFocusEpisode(null)}
-          />
+          <EpisodesPage episodes={episodes} setEpisodes={setEpisodes} />
         )}
         {page === 'footage' && <FootageLog footage={footage} setFootage={setFootage} />}
         {page === 'schedule' && <SchedulePage schedule={schedule} setSchedule={setSchedule} />}
         {page === 'team' && <TeamPage team={team} setTeam={setTeam} />}
         {page === 'questions' && <OpenQuestionsPage questions={questions} setQuestions={setQuestions} />}
       </main>
+
+      {/* Floating radial navigation — long-press & slide, or tap to open */}
+      <RadialMenu items={NAV} current={page} onSelect={setPage} />
     </div>
   );
 }

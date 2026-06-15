@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
 import { COLORS, STATUS_META } from '../theme.js';
 
 export function StatusBadge({ status }) {
@@ -77,69 +76,6 @@ export function Button({ variant = 'solid', className = '', children, ...props }
       style={styles}
     >
       {children}
-    </button>
-  );
-}
-
-export function ReelCard({ ep, onClick }) {
-  const doneCount = ep.subjects.filter((s) => s.done).length;
-  const total = ep.subjects.length || 1;
-  const pct = Math.round((doneCount / total) * 100);
-
-  return (
-    <button
-      onClick={onClick}
-      className="text-left w-full rounded-xl border transition-all hover:-translate-y-0.5 hover:shadow-lg"
-      style={{
-        backgroundColor: COLORS.card,
-        borderColor: COLORS.border,
-        boxShadow: '0 2px 8px rgba(28,26,23,0.06)',
-      }}
-    >
-      <div className="flex justify-between px-4 pt-3" aria-hidden="true">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <span
-            key={i}
-            className="block rounded-full"
-            style={{ width: 6, height: 6, backgroundColor: COLORS.ink, opacity: 0.08 }}
-          />
-        ))}
-      </div>
-
-      <div className="p-5 pt-3">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <div className="text-xs font-mono tracking-widest uppercase" style={{ color: COLORS.gold }}>
-              Episode {ep.num}
-            </div>
-            <h3
-              className="text-xl font-bold leading-tight mt-0.5"
-              style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}
-            >
-              {ep.title}
-            </h3>
-          </div>
-          <ChevronRight size={20} style={{ color: COLORS.inkSoft }} />
-        </div>
-
-        <p className="text-sm mb-4" style={{ color: COLORS.inkSoft }}>
-          {ep.focus}
-        </p>
-
-        <div className="flex items-center justify-between mb-2">
-          <StatusBadge status={ep.status} />
-          <span className="text-xs font-mono" style={{ color: COLORS.inkSoft }}>
-            {doneCount}/{ep.subjects.length} interviews
-          </span>
-        </div>
-
-        <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: COLORS.border }}>
-          <div
-            className="h-full rounded-full transition-all"
-            style={{ width: `${pct}%`, backgroundColor: COLORS.red }}
-          />
-        </div>
-      </div>
     </button>
   );
 }
