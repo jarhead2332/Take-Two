@@ -1,5 +1,37 @@
 import React from 'react';
+import { Plus } from 'lucide-react';
 import { COLORS, STATUS_META } from '../theme.js';
+
+// Page title row with an optional circular "+" action button on the right.
+export function PageTitle({ title, subtitle, onAdd, addLabel = 'Add' }) {
+  return (
+    <div className="flex items-start justify-between gap-3 mb-6">
+      <div className="min-w-0">
+        <h1
+          className="text-2xl sm:text-3xl font-bold"
+          style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}
+        >
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-sm mt-1" style={{ color: COLORS.inkSoft }}>
+            {subtitle}
+          </p>
+        )}
+      </div>
+      {onAdd && (
+        <button
+          onClick={onAdd}
+          aria-label={addLabel}
+          className="shrink-0 flex items-center justify-center rounded-full shadow-md transition-transform active:scale-95"
+          style={{ width: 40, height: 40, backgroundColor: COLORS.red, color: '#FFFFFF' }}
+        >
+          <Plus size={22} strokeWidth={2.5} />
+        </button>
+      )}
+    </div>
+  );
+}
 
 export function StatusBadge({ status }) {
   const meta = STATUS_META[status] || STATUS_META['standing-by'];
@@ -42,15 +74,16 @@ export function PageHeader({ kicker, title, subtitle }) {
 }
 
 // Shared text input that matches the paper-card aesthetic.
-export function TextInput({ className = '', ...props }) {
+export const TextInput = React.forwardRef(function TextInput({ className = '', ...props }, ref) {
   return (
     <input
+      ref={ref}
       {...props}
       className={`rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#1C1A17] ${className}`}
       style={{ backgroundColor: '#FFFDF9', borderColor: COLORS.border, color: COLORS.ink }}
     />
   );
-}
+});
 
 export function Select({ className = '', children, ...props }) {
   return (

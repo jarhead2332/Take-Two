@@ -1,6 +1,6 @@
 import React from 'react';
 import { COLORS } from '../theme.js';
-import { StatusBadge } from '../components/ui.jsx';
+import { StatusBadge, PageTitle } from '../components/ui.jsx';
 import EpisodeControls from '../components/EpisodeControls.jsx';
 
 export default function EpisodesPage({ episodes, setEpisodes }) {
@@ -8,12 +8,10 @@ export default function EpisodesPage({ episodes, setEpisodes }) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1" style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}>
-        Episodes
-      </h1>
-      <p className="text-sm mb-6" style={{ color: COLORS.inkSoft }}>
-        Sorted by completion order — rough cuts can start as soon as an episode's interviews wrap.
-      </p>
+      <PageTitle
+        title="Episodes"
+        subtitle="Sorted by completion order — rough cuts can start as soon as an episode's interviews wrap."
+      />
 
       <div className="space-y-4">
         {sorted.map((ep) => (

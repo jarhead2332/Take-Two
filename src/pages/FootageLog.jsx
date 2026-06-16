@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, RefreshCw } from 'lucide-react';
 import { COLORS } from '../theme.js';
 import { FOOTAGE_CATEGORIES } from '../data/seed.js';
-import { Button, Select, TextInput } from '../components/ui.jsx';
+import { Button, Select, TextInput, PageTitle } from '../components/ui.jsx';
 import { nextId } from '../utils.js';
 
 const EMPTY = { label: '', episode: 1, category: FOOTAGE_CATEGORIES[0], status: 'needed' };
@@ -10,6 +10,7 @@ const EMPTY = { label: '', episode: 1, category: FOOTAGE_CATEGORIES[0], status: 
 export default function FootageLog({ footage, setFootage }) {
   const [filter, setFilter] = useState('all');
   const [form, setForm] = useState(EMPTY);
+  const [showAdd, setShowAdd] = useState(false);
 
   const filtered = filter === 'all' ? footage : footage.filter((f) => f.status === filter);
 
@@ -27,6 +28,7 @@ export default function FootageLog({ footage, setFootage }) {
       },
     ]);
     setForm(EMPTY);
+    setShowAdd(false);
   };
 
   const toggleStatus = (id) =>
@@ -40,14 +42,15 @@ export default function FootageLog({ footage, setFootage }) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1" style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}>
-        Footage Log
-      </h1>
-      <p className="text-sm mb-5" style={{ color: COLORS.inkSoft }}>
-        B-roll status — filming runs through June 27.
-      </p>
+      <PageTitle
+        title="Footage Log"
+        subtitle="B-roll status — filming runs through June 27."
+        onAdd={() => setShowAdd((s) => !s)}
+        addLabel="Add clip"
+      />
 
       {/* Add clip */}
+      {showAdd && (
       <form
         onSubmit={addClip}
         className="rounded-xl border p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 items-end"
@@ -110,6 +113,7 @@ export default function FootageLog({ footage, setFootage }) {
           </Button>
         </div>
       </form>
+      )}
 
       {/* Filters */}
       <div className="flex gap-2 mb-5">

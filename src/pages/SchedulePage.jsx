@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, CheckCircle2, Circle } from 'lucide-react';
 import { COLORS } from '../theme.js';
-import { Button, Select, TextInput } from '../components/ui.jsx';
+import { Button, Select, TextInput, PageTitle } from '../components/ui.jsx';
 import { nextId, scheduleSortKey } from '../utils.js';
 
 const EMPTY = { week: '', day: 'mon', people: '', tag: '', episode: '' };
 
 export default function SchedulePage({ schedule, setSchedule }) {
   const [form, setForm] = useState(EMPTY);
+  const [showAdd, setShowAdd] = useState(false);
 
   const updateSession = (id, patch) =>
     setSchedule((list) => list.map((s) => (s.id === id ? { ...s, ...patch } : s)));
@@ -30,6 +31,7 @@ export default function SchedulePage({ schedule, setSchedule }) {
       },
     ]);
     setForm(EMPTY);
+    setShowAdd(false);
   };
 
   // Group by week, weeks ordered by date.
@@ -47,12 +49,12 @@ export default function SchedulePage({ schedule, setSchedule }) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1" style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}>
-        Interview Schedule
-      </h1>
-      <p className="text-sm mb-6" style={{ color: COLORS.inkSoft }}>
-        Mondays &amp; Tuesdays, July 6–28, all sessions at Jared's house.
-      </p>
+      <PageTitle
+        title="Interview Schedule"
+        subtitle="Mondays & Tuesdays, July 6–28, all sessions at Jared's house."
+        onAdd={() => setShowAdd((s) => !s)}
+        addLabel="Add session"
+      />
 
       <div className="space-y-3 mb-8">
         {weeks.map((week) => (
@@ -78,6 +80,8 @@ export default function SchedulePage({ schedule, setSchedule }) {
       </div>
 
       {/* Add session */}
+      {showAdd && (
+      <>
       <h2 className="text-sm font-semibold uppercase tracking-wide mb-3" style={{ color: COLORS.inkSoft }}>
         Add a session
       </h2>
@@ -134,6 +138,8 @@ export default function SchedulePage({ schedule, setSchedule }) {
           </Button>
         </div>
       </form>
+      </>
+      )}
     </div>
   );
 }

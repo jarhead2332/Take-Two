@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Pencil, Check, X } from 'lucide-react';
+import { Trash2, Pencil, Check, X } from 'lucide-react';
 import { COLORS } from '../theme.js';
-import { Button, TextInput } from '../components/ui.jsx';
+import { Button, TextInput, PageTitle } from '../components/ui.jsx';
 
 export default function TeamPage({ team, setTeam }) {
   const [editing, setEditing] = useState(null); // index being edited
@@ -19,21 +19,12 @@ export default function TeamPage({ team, setTeam }) {
 
   return (
     <div>
-      <div className="flex items-end justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold mb-1" style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}>
-            Team
-          </h1>
-          <p className="text-sm" style={{ color: COLORS.inkSoft }}>
-            {team.length} people, one production.
-          </p>
-        </div>
-        {!adding && (
-          <Button variant="ghost" onClick={() => setAdding(true)}>
-            <Plus size={15} /> Add person
-          </Button>
-        )}
-      </div>
+      <PageTitle
+        title="Team"
+        subtitle={`${team.length} people, one production.`}
+        onAdd={adding ? undefined : () => setAdding(true)}
+        addLabel="Add person"
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {adding && (

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-  Film, Camera, CalendarDays, Users, ListChecks, Clapperboard, Download, Upload, Menu, X,
+  Film, Camera, CalendarDays, Users, ListChecks, Clapperboard, Download, Upload,
 } from 'lucide-react';
 import { COLORS } from './theme.js';
 import { useLocalStorage } from './hooks/useLocalStorage.js';
@@ -14,19 +14,19 @@ import FootageLog from './pages/FootageLog.jsx';
 import SchedulePage from './pages/SchedulePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
 import OpenQuestionsPage from './pages/OpenQuestionsPage.jsx';
+import BottomNav from './components/BottomNav.jsx';
 
 const NAV = [
-  { id: 'dashboard', label: 'Dashboard', icon: Clapperboard },
-  { id: 'episodes', label: 'Episodes', icon: Film },
-  { id: 'footage', label: 'Footage Log', icon: Camera },
-  { id: 'schedule', label: 'Interview Schedule', icon: CalendarDays },
-  { id: 'team', label: 'Team', icon: Users },
-  { id: 'questions', label: 'Open Questions', icon: ListChecks },
+  { id: 'dashboard', label: 'Dashboard', short: 'Home', icon: Clapperboard },
+  { id: 'episodes', label: 'Episodes', short: 'Episodes', icon: Film },
+  { id: 'footage', label: 'Footage Log', short: 'Footage', icon: Camera },
+  { id: 'schedule', label: 'Interview Schedule', short: 'Schedule', icon: CalendarDays },
+  { id: 'team', label: 'Team', short: 'Team', icon: Users },
+  { id: 'questions', label: 'Open Questions', short: 'Q&A', icon: ListChecks },
 ];
 
 export default function App() {
   const [page, setPage] = useState('dashboard');
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const [episodes, setEpisodes] = useLocalStorage('episodes', SEED_EPISODES);
   const [footage, setFootage] = useLocalStorage('footage', SEED_FOOTAGE);
@@ -35,19 +35,6 @@ export default function App() {
   const [questions, setQuestions] = useLocalStorage('questions', SEED_QUESTIONS);
 
   const fileRef = useRef(null);
-
-  // Close the menu on Escape.
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e) => e.key === 'Escape' && setMenuOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
-
-  const go = (id) => {
-    setPage(id);
-    setMenuOpen(false);
-  };
 
   const exportData = () => {
     const payload = { episodes, footage, schedule, team, questions, exportedAt: new Date().toISOString() };
@@ -58,7 +45,6 @@ export default function App() {
     a.download = `behind-the-show-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setMenuOpen(false);
   };
 
   const importData = (e) => {
@@ -79,122 +65,16 @@ export default function App() {
     };
     reader.readAsText(file);
     e.target.value = '';
-    setMenuOpen(false);
   };
 
-  const currentLabel = NAV.find((n) => n.id === page)?.label || '';
-
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: COLORS.bg, color: COLORS.ink }}>
-      {/* Top bar */}
-      <header
-        className="sticky top-0 z-30"
-        style={{
-          backgroundColor: COLORS.sidebar,
-          borderBottom: `1px solid ${COLORS.sidebarBorder}`,
-          // Clear the iPhone status bar / notch in standalone PWA mode.
-          paddingTop: 'env(safe-area-inset-top, 0px)',
-        }}
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.bg, color: COLORS.ink }}>
+      {/* Content — top padding clears the iPhone status bar; bottom padding
+          clears the fixed tab bar. */}
+      <main
+        className="w-full max-w-3xl mx-auto px-5 sm:px-8 pb-28"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }}
       >
-        <div className="flex items-center justify-between px-4 sm:px-6 h-14">
-          <div className="min-w-0">
-            <div className="text-[10px] font-mono tracking-widest uppercase leading-none" style={{ color: COLORS.gold }}>
-              Behind the Show
-            </div>
-            <div
-              className="text-base font-bold leading-tight truncate"
-              style={{ color: COLORS.card, fontFamily: 'Georgia, serif' }}
-            >
-              {currentLabel}
-            </div>
-          </div>
-
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            className="shrink-0 flex items-center justify-center rounded-lg"
-            style={{
-              width: 42,
-              height: 42,
-              backgroundColor: menuOpen ? '#B8935A22' : '#FFFFFF12',
-              color: menuOpen ? COLORS.gold : COLORS.card,
-            }}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </header>
-
-      {/* Dropdown menu + backdrop */}
-      {menuOpen && (
-        <>
-          <div
-            onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-30"
-            style={{ backgroundColor: 'rgba(28,26,23,0.35)' }}
-            aria-hidden="true"
-          />
-          <div
-            className="fixed right-3 z-40 rounded-2xl border shadow-2xl overflow-hidden"
-            style={{
-              top: 'calc(env(safe-area-inset-top, 0px) + 58px)',
-              width: 240,
-              backgroundColor: COLORS.card,
-              borderColor: COLORS.border,
-            }}
-            role="menu"
-          >
-            <nav className="p-2">
-              {NAV.map((item) => {
-                const Icon = item.icon;
-                const active = page === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => go(item.id)}
-                    role="menuitem"
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                    style={{
-                      backgroundColor: active ? '#B8935A22' : 'transparent',
-                      color: active ? COLORS.gold : COLORS.ink,
-                    }}
-                  >
-                    <Icon size={17} />
-                    {item.label}
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="p-2 border-t" style={{ borderColor: COLORS.border }}>
-              <div className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wide" style={{ color: COLORS.inkSoft }}>
-                Backup
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={exportData}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium border"
-                  style={{ borderColor: COLORS.border, color: COLORS.inkSoft }}
-                >
-                  <Download size={14} /> Export
-                </button>
-                <button
-                  onClick={() => fileRef.current?.click()}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium border"
-                  style={{ borderColor: COLORS.border, color: COLORS.inkSoft }}
-                >
-                  <Upload size={14} /> Import
-                </button>
-                <input ref={fileRef} type="file" accept="application/json" onChange={importData} className="hidden" />
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Main */}
-      <main className="flex-1 w-full max-w-5xl mx-auto p-5 sm:p-8 pb-24">
         {page === 'dashboard' && (
           <Dashboard
             episodes={episodes}
@@ -212,7 +92,33 @@ export default function App() {
         {page === 'schedule' && <SchedulePage schedule={schedule} setSchedule={setSchedule} />}
         {page === 'team' && <TeamPage team={team} setTeam={setTeam} />}
         {page === 'questions' && <OpenQuestionsPage questions={questions} setQuestions={setQuestions} />}
+
+        {/* Backup tools live at the bottom of the Dashboard */}
+        {page === 'dashboard' && (
+        <div className="mt-10 pt-5 border-t flex items-center gap-2" style={{ borderColor: COLORS.border }}>
+          <span className="text-xs mr-auto" style={{ color: COLORS.inkSoft }}>
+            Data is saved on this device.
+          </span>
+          <button
+            onClick={exportData}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border"
+            style={{ borderColor: COLORS.border, color: COLORS.inkSoft }}
+          >
+            <Download size={14} /> Export
+          </button>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border"
+            style={{ borderColor: COLORS.border, color: COLORS.inkSoft }}
+          >
+            <Upload size={14} /> Import
+          </button>
+          <input ref={fileRef} type="file" accept="application/json" onChange={importData} className="hidden" />
+        </div>
+        )}
       </main>
+
+      <BottomNav items={NAV} current={page} onSelect={setPage} />
     </div>
   );
 }

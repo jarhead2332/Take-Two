@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Circle, CheckCircle2, Plus, Trash2, Pencil, Check, X } from 'lucide-react';
 import { COLORS } from '../theme.js';
-import { Button, TextInput } from '../components/ui.jsx';
+import { Button, TextInput, PageTitle } from '../components/ui.jsx';
 import { nextId } from '../utils.js';
 
 export default function OpenQuestionsPage({ questions, setQuestions }) {
   const [text, setText] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const inputRef = useRef(null);
 
   const toggle = (id) =>
     setQuestions((qs) => qs.map((q) => (q.id === id ? { ...q, done: !q.done } : q)));
@@ -34,15 +35,16 @@ export default function OpenQuestionsPage({ questions, setQuestions }) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-1" style={{ color: COLORS.ink, fontFamily: 'Georgia, serif' }}>
-        Open Questions
-      </h1>
-      <p className="text-sm mb-6" style={{ color: COLORS.inkSoft }}>
-        Pending decisions before editing locks in.
-      </p>
+      <PageTitle
+        title="Open Questions"
+        subtitle="Pending decisions before editing locks in."
+        onAdd={() => inputRef.current?.focus()}
+        addLabel="Add question"
+      />
 
       <form onSubmit={add} className="flex gap-2 mb-5">
         <TextInput
+          ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Add a question or decision…"
