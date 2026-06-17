@@ -10,8 +10,14 @@ body,
 
 body {
   margin: 0;
+  background-color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+/* Avoid the iOS tap highlight flash on buttons. */
+button {
+  -webkit-tap-highlight-color: transparent;
 }

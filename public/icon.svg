@@ -1,20 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#1C1A17"/>
-  <g transform="translate(106 140)">
-    <!-- clapperboard top (angled stripes) -->
-    <g>
-      <rect x="0" y="0" width="300" height="58" rx="10" fill="#2E2A24"/>
-      <g fill="#B8935A">
-        <polygon points="14,0 52,0 30,58 -8,58"/>
-        <polygon points="78,0 116,0 94,58 56,58"/>
-        <polygon points="142,0 180,0 158,58 120,58"/>
-        <polygon points="206,0 244,0 222,58 184,58"/>
-        <polygon points="270,0 300,0 300,16 290,58 248,58"/>
-      </g>
+  <rect width="512" height="512" rx="112" fill="#e63946"/>
+  <g transform="translate(112 150)">
+    <rect x="0" y="0" width="288" height="56" rx="9" fill="#ffffff" opacity="0.9"/>
+    <g fill="#e63946">
+      <polygon points="12,0 50,0 28,56 -10,56"/>
+      <polygon points="76,0 114,0 92,56 54,56"/>
+      <polygon points="140,0 178,0 156,56 118,56"/>
+      <polygon points="204,0 242,0 220,56 182,56"/>
+      <polygon points="268,0 288,0 288,14 280,56 246,56"/>
     </g>
-    <!-- board body -->
-    <rect x="0" y="66" width="300" height="166" rx="12" fill="#F5EDE0"/>
-    <!-- play triangle -->
-    <polygon points="120,108 200,149 120,190" fill="#C9472B"/>
+    <rect x="0" y="64" width="288" height="148" rx="11" fill="#ffffff"/>
+    <polygon points="116,104 188,143 116,182" fill="#e63946"/>
   </g>
 </svg>

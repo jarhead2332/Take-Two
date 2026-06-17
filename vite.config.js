@@ -14,12 +14,11 @@ export default defineConfig({
       injectRegister: 'auto',
       includeAssets: ['favicon-32.png', 'apple-touch-icon.png', 'icon.svg'],
       manifest: {
-        name: 'Behind the Show — Production Tracker',
-        short_name: 'Behind the Show',
-        description:
-          'Production tracker for the Behind the Show documentary — episodes, footage, schedule, team, and open questions.',
-        theme_color: '#1C1A17',
-        background_color: '#FBF7F0',
+        name: 'Behind the Show',
+        short_name: 'BTS Tracker',
+        description: 'Behind the Show — production tracker for the documentary series.',
+        theme_color: '#1a1a2e',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         categories: ['productivity'],

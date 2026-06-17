@@ -1,14 +1,9 @@
-// Seed data — used only on first run, when a localStorage key doesn't exist yet.
-// After that, the live data in localStorage is the source of truth.
+// First-run seed data. Once a localStorage key exists, that is the source of truth.
 
 export const SEED_EPISODES = [
   {
-    num: 1,
-    title: 'The Vision',
-    focus: 'Origin story — how an idea became a vision',
-    status: 'standing-by',
-    order: 4,
-    notes: '',
+    num: 1, title: 'The Vision', focus: 'Origin story — how an idea became a vision',
+    status: 'standing-by', order: 4, colorHex: '#e63946', notes: '',
     subjects: [
       { name: 'Marcia', done: false },
       { name: 'Mama Rhoads', done: false },
@@ -16,36 +11,24 @@ export const SEED_EPISODES = [
     ],
   },
   {
-    num: 2,
-    title: 'Building the World',
-    focus: 'Set construction — foam, paint, design',
-    status: 'in-progress',
-    order: 1,
-    notes: '',
+    num: 2, title: 'Building the World', focus: 'Set construction — foam, paint, design',
+    status: 'in-progress', order: 1, colorHex: '#7c3aed', notes: '',
     subjects: [
       { name: 'Jay', done: false },
       { name: 'Phil', done: false },
     ],
   },
   {
-    num: 3,
-    title: 'Making It Move',
-    focus: 'Choreography for 27 acts, one practice a week',
-    status: 'standing-by',
-    order: 2,
-    notes: '',
+    num: 3, title: 'Making It Move', focus: 'Choreography for 27 acts, one practice a week',
+    status: 'standing-by', order: 2, colorHex: '#2563eb', notes: '',
     subjects: [
       { name: 'Joe', done: false },
       { name: 'Justina', done: false },
     ],
   },
   {
-    num: 4,
-    title: 'Making It Real',
-    focus: 'Costumes (65 total) and advertising',
-    status: 'standing-by',
-    order: 4,
-    notes: '',
+    num: 4, title: 'Making It Real', focus: 'Costumes (65 total) and advertising',
+    status: 'standing-by', order: 4, colorHex: '#d97706', notes: '',
     subjects: [
       { name: 'Marcia', done: false },
       { name: 'Andrea', done: false },
@@ -53,12 +36,8 @@ export const SEED_EPISODES = [
     ],
   },
   {
-    num: 5,
-    title: 'Behind the Booth',
-    focus: 'AV — six months of live troubleshooting',
-    status: 'standing-by',
-    order: 3,
-    notes: '',
+    num: 5, title: 'Behind the Booth', focus: 'AV — six months of live troubleshooting',
+    status: 'standing-by', order: 3, colorHex: '#0d9488', notes: '',
     subjects: [
       { name: 'Phil', done: false },
       { name: 'Connor', done: false },
@@ -66,12 +45,8 @@ export const SEED_EPISODES = [
     ],
   },
   {
-    num: 6,
-    title: 'Show Week',
-    focus: 'Culmination — reflective interviews with everyone',
-    status: 'standing-by',
-    order: 4,
-    notes: '',
+    num: 6, title: 'Show Week', focus: 'Culmination — reflective interviews with everyone',
+    status: 'standing-by', order: 4, colorHex: '#16a34a', notes: '',
     subjects: [{ name: 'All 10 people', done: false }],
   },
 ];
@@ -85,29 +60,6 @@ export const SEED_FOOTAGE = [
   { id: 6, label: 'Costume check day', episode: 4, category: 'Costumes', status: 'needed' },
 ];
 
-export const SEED_SCHEDULE = [
-  { id: 1, week: 'Jul 6–7', day: 'mon', people: 'Jay + Phil', tag: 'Sets', episode: 2, done: false },
-  { id: 2, week: 'Jul 6–7', day: 'tue', people: 'Phil + Connor', tag: 'AV', episode: 5, done: false },
-  { id: 3, week: 'Jul 13–14', day: 'mon', people: 'Joe + Justina', tag: 'Choreography', episode: 3, done: false },
-  { id: 4, week: 'Jul 20–21', day: 'mon', people: 'Mama Rhoads', tag: 'Solo', episode: 1, done: false },
-  { id: 5, week: 'Jul 20–21', day: 'tue', people: 'James', tag: 'Solo', episode: 1, done: false },
-  { id: 6, week: 'Jul 27–28', day: 'mon', people: 'Marcia + Andrea + Susie Dean', tag: 'Costumes / Advertising', episode: 4, done: false },
-  { id: 7, week: 'Jul 27–28', day: 'tue', people: 'Buffer day', tag: '', episode: null, done: false },
-];
-
-export const SEED_TEAM = [
-  { name: 'Mama Rhoads', roles: ['Director'], episodes: [1, 5, 6] },
-  { name: 'Marcia', roles: ['Costumes lead', 'Advertising'], episodes: [1, 4, 6] },
-  { name: 'Andrea', roles: ['Costumes support', 'Advertising'], episodes: [4, 6] },
-  { name: 'Susie Dean', roles: ['Costumes — sewing & crafting'], episodes: [4, 6] },
-  { name: 'Jay', roles: ['Sets — vision/design'], episodes: [2, 6] },
-  { name: 'Phil', roles: ['Sets — execution', 'AV (ProPresenter)'], episodes: [2, 5, 6] },
-  { name: 'Joe', roles: ['Choreography lead'], episodes: [3, 6] },
-  { name: 'Justina', roles: ['Choreography support'], episodes: [3, 6] },
-  { name: 'James', roles: ['Composer'], episodes: [1, 6] },
-  { name: 'Connor', roles: ['AV — audio mixing'], episodes: [5, 6] },
-];
-
 export const SEED_QUESTIONS = [
   { id: 1, text: 'Narrator: Jordan vs. Nick', done: false },
   { id: 2, text: 'Ask Mama Rhoads about her hardest moment / decision (Ep 1)', done: false },
@@ -115,11 +67,27 @@ export const SEED_QUESTIONS = [
   { id: 4, text: 'YouTube thumbnails — Canva, handled independently', done: false },
 ];
 
-export const FOOTAGE_CATEGORIES = [
-  'Set construction',
-  'Choreography',
-  'Costumes',
-  'AV / Booth',
-  'Advertising',
-  'Other',
+// Gantt timeline. episode → bar takes that episode's color; otherwise colorHex; else grey.
+export const SEED_SCHEDULE = [
+  { id: 1, section: 'Show & Filming', label: 'Show nights', start: '2026-06-25', end: '2026-06-27', colorHex: '#e63946' },
+  { id: 2, section: 'Show & Filming', label: 'B-roll filming', start: '2026-06-25', end: '2026-06-27', colorHex: '#6b7280' },
+
+  { id: 3, section: 'Interviews', label: 'Jay + Phil', start: '2026-07-07', end: '2026-07-07', episode: 2, done: false },
+  { id: 4, section: 'Interviews', label: 'Phil + Connor', start: '2026-07-08', end: '2026-07-08', episode: 5, done: false },
+  { id: 5, section: 'Interviews', label: 'Joe + Justina', start: '2026-07-14', end: '2026-07-14', episode: 3, done: false },
+  { id: 6, section: 'Interviews', label: 'Mama Rhoads', start: '2026-07-21', end: '2026-07-21', episode: 1, done: false },
+  { id: 7, section: 'Interviews', label: 'James', start: '2026-07-21', end: '2026-07-21', episode: 1, done: false },
+  { id: 8, section: 'Interviews', label: 'Marcia + team', start: '2026-07-28', end: '2026-07-28', episode: 4, done: false },
+
+  { id: 9, section: 'Editing', label: 'Ep 2 rough cut', start: '2026-07-08', end: '2026-07-14', episode: 2 },
+  { id: 10, section: 'Editing', label: 'Ep 3 rough cut', start: '2026-07-14', end: '2026-07-21', episode: 3 },
+  { id: 11, section: 'Editing', label: 'Ep 5 rough cut', start: '2026-07-21', end: '2026-07-28', episode: 5 },
+  { id: 12, section: 'Editing', label: 'Eps 1, 4, 6', start: '2026-07-28', end: '2026-08-31', episode: 6 },
+  { id: 13, section: 'Editing', label: 'Polish & audio', start: '2026-08-01', end: '2026-09-30', colorHex: '#6b7280' },
+
+  { id: 14, section: 'Release', label: 'Episodes', start: '2026-09-01', end: '2026-10-31', episode: 1 },
 ];
+
+export const SCHEDULE_SECTIONS = ['Show & Filming', 'Interviews', 'Editing', 'Release'];
+
+export const nextId = (items) => items.reduce((m, x) => Math.max(m, x.id || 0), 0) + 1;
