@@ -56,15 +56,20 @@ export const SEED_FOOTAGE = [
   { id: 2, label: 'Set construction photos', episode: 2, category: 'Set construction', status: 'captured' },
   { id: 3, label: 'Choreography rehearsal footage', episode: 3, category: 'Choreography', status: 'captured' },
   { id: 4, label: 'Costume B-roll', episode: 4, category: 'Costumes', status: 'captured' },
-  { id: 5, label: 'AV booth in action', episode: 5, category: 'AV / Booth', status: 'needed' },
-  { id: 6, label: 'Costume check day', episode: 4, category: 'Costumes', status: 'needed' },
+  { id: 5, label: 'AV booth in action — Phil at ProPresenter, Connor on audio board', episode: 5, category: 'AV / Booth', status: 'needed' },
+  { id: 6, label: 'Backstage moments from Sunday June 15 rehearsal', episode: 1, category: 'Other', status: 'captured' },
+  { id: 7, label: 'Set building footage from Sunday June 15', episode: 2, category: 'Set construction', status: 'captured' },
+  { id: 8, label: 'Show week time-lapse — set build days Jun 22 and Jun 24', episode: 2, category: 'Set construction', status: 'needed' },
+  { id: 9, label: 'Mama Rhoads running a cue-through', episode: 5, category: 'AV / Booth', status: 'needed' },
+  { id: 10, label: 'Full show recording on church cameras — Final Rehearsal Jun 23', episode: 6, category: 'Other', status: 'needed' },
+  { id: 11, label: 'Pre-show energy on live show nights — full costume and hair/makeup', episode: 6, category: 'Other', status: 'needed' },
 ];
 
 export const SEED_QUESTIONS = [
-  { id: 1, text: 'Narrator: Jordan vs. Nick', done: false },
-  { id: 2, text: 'Ask Mama Rhoads about her hardest moment / decision (Ep 1)', done: false },
-  { id: 3, text: 'Confirm usage rights for professionally-recorded show footage (Ep 6)', done: false },
-  { id: 4, text: 'YouTube thumbnails — Canva, handled independently', done: false },
+  { id: 1, text: 'Reach out to Nick about the narrator role — he needs to know before recording in September', done: false },
+  { id: 2, text: 'Narrator script — written after all interviews wrap, then recorded with Nick in September', done: false },
+  { id: 3, text: 'YouTube thumbnails — handling independently in Canva after episodes are cut', done: false },
+  { id: 4, text: 'Release pacing — one episode per day or spread over several weeks? Decide once editing is underway', done: false },
 ];
 
 // Gantt timeline. episode → bar takes that episode's color; otherwise colorHex; else grey.

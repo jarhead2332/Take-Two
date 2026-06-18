@@ -40,7 +40,7 @@ export default function Schedule({ schedule, setSchedule, episodes }) {
 
   return (
     <div>
-      <TopBar eyebrow="Timeline" title="Schedule" subtitle="Jun – Oct 2026 · scroll sideways" />
+      <TopBar eyebrow="Timeline" title="Schedule" subtitle="Mondays & Tuesdays, July 6–28 · All sessions at Rhoads House" />
 
       <div className="overflow-x-auto -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div style={{ width: LABEL_W + trackWidth }}>

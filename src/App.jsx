@@ -40,7 +40,16 @@ export default function App() {
         ) : (
           <>
             {tab === 'dashboard' && (
-              <Dashboard episodes={episodes} footage={footage} questions={questions} schedule={schedule} />
+              <Dashboard
+                episodes={episodes}
+                footage={footage}
+                questions={questions}
+                schedule={schedule}
+                setEpisodes={setEpisodes}
+                setFootage={setFootage}
+                setQuestions={setQuestions}
+                setSchedule={setSchedule}
+              />
             )}
             {tab === 'episodes' && <Episodes episodes={episodes} onOpen={setDetailNum} />}
             {tab === 'footage' && <Footage footage={footage} setFootage={setFootage} episodes={episodes} />}
