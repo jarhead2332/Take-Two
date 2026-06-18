@@ -1,158 +1,197 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, Circle } from 'lucide-react';
 import { COLORS } from '../data/constants.js';
-import { SCHEDULE_SECTIONS } from '../data/seed.js';
-import { TopBar } from '../components/ui.jsx';
-import { parseDate, dayDiff, formatRange } from '../data/dates.js';
+import { TopBar, SectionLabel } from '../components/ui.jsx';
+import { parseDate, formatRange } from '../data/dates.js';
 
-const PX_PER_DAY = 6;
-const LABEL_W = 92;
-const ROW_H = 34;
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+const sameDay = (a, b) =>
+  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export default function Schedule({ schedule, setSchedule, episodes }) {
-  const [selected, setSelected] = useState(null);
+  // Default to the month of the earliest scheduled task.
+  const earliest = schedule.length
+    ? new Date(Math.min(...schedule.map((t) => parseDate(t.start))))
+    : new Date();
+  const [view, setView] = useState({ year: earliest.getFullYear(), month: earliest.getMonth() });
+  const [selected, setSelected] = useState(null); // Date or null
+
+  const today = new Date();
 
   const colorOf = (task) => {
     if (task.episode) return episodes.find((e) => e.num === task.episode)?.colorHex || COLORS.muted;
     return task.colorHex || COLORS.muted;
   };
 
-  // Timeline bounds.
-  const starts = schedule.map((t) => parseDate(t.start));
-  const ends = schedule.map((t) => parseDate(t.end));
-  const min = new Date(Math.min(...starts));
-  const max = new Date(Math.max(...ends));
-  const totalDays = dayDiff(min, max) + 1;
-  const trackWidth = totalDays * PX_PER_DAY;
-
-  // Month gridlines/labels.
-  const months = [];
-  const cursor = new Date(min.getFullYear(), min.getMonth(), 1);
-  while (cursor <= max) {
-    const x = Math.max(0, dayDiff(min, cursor) * PX_PER_DAY);
-    months.push({ x, label: `${MONTHS_SHORT[cursor.getMonth()]}` });
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
+  // Tasks whose [start, end] range covers a given day.
+  const tasksOnDay = (date) =>
+    schedule.filter((t) => {
+      const s = parseDate(t.start);
+      const e = parseDate(t.end);
+      return date >= s && date <= e;
+    });
 
   const toggleDone = (id) =>
     setSchedule((list) => list.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
 
+  const changeMonth = (delta) => {
+    setSelected(null);
+    setView((v) => {
+      const d = new Date(v.year, v.month + delta, 1);
+      return { year: d.getFullYear(), month: d.getMonth() };
+    });
+  };
+
+  const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+  const firstWeekday = new Date(view.year, view.month, 1).getDay();
+
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const selectedTasks = selected ? tasksOnDay(selected) : [];
+
   return (
     <div>
-      <TopBar eyebrow="Timeline" title="Schedule" subtitle="Mondays & Tuesdays, July 6–28 · All sessions at Rhoads House" />
+      <TopBar
+        eyebrow="Timeline"
+        title="Schedule"
+        subtitle="Mondays & Tuesdays, July 6–28 · All sessions at Rhoads House"
+      />
 
-      <div className="overflow-x-auto -mx-1 px-1" style={{ WebkitOverflowScrolling: 'touch' }}>
-        <div style={{ width: LABEL_W + trackWidth }}>
-          {/* Month axis */}
-          <div className="flex" style={{ height: 22 }}>
-            <div style={{ width: LABEL_W, position: 'sticky', left: 0, background: '#fff', zIndex: 3 }} />
-            <div style={{ width: trackWidth, position: 'relative' }}>
-              {months.map((m, i) => (
-                <div
-                  key={i}
-                  className="absolute text-[10px] font-semibold uppercase"
-                  style={{ left: m.x + 3, top: 4, color: COLORS.muted }}
-                >
-                  {m.label}
-                </div>
-              ))}
+      {/* Month switcher */}
+      <div className="flex items-center justify-between mb-2">
+        <button onClick={() => changeMonth(-1)} aria-label="Previous month" className="p-2" style={{ color: COLORS.red }}>
+          <ChevronLeft size={22} />
+        </button>
+        <div className="text-[17px] font-semibold" style={{ color: COLORS.ink }}>
+          {MONTH_NAMES[view.month]} {view.year}
+        </div>
+        <button onClick={() => changeMonth(1)} aria-label="Next month" className="p-2" style={{ color: COLORS.red }}>
+          <ChevronRight size={22} />
+        </button>
+      </div>
+
+      {/* Calendar card */}
+      <div className="rounded-[12px] overflow-hidden" style={{ border: `0.5px solid ${COLORS.border}` }}>
+        {/* Weekday header */}
+        <div className="grid grid-cols-7">
+          {WEEKDAYS.map((w, i) => (
+            <div key={i} className="text-center text-[11px] font-medium py-2" style={{ color: COLORS.muted }}>
+              {w}
             </div>
-          </div>
+          ))}
+        </div>
 
-          {SCHEDULE_SECTIONS.map((section) => {
-            const rows = schedule.filter((t) => t.section === section);
-            if (rows.length === 0) return null;
+        {/* Day grid */}
+        <div className="grid grid-cols-7">
+          {cells.map((d, i) => {
+            if (d == null) {
+              return <div key={i} style={{ borderTop: `0.5px solid ${COLORS.border}`, minHeight: 56 }} />;
+            }
+            const date = new Date(view.year, view.month, d);
+            const isWeekend = i % 7 === 0 || i % 7 === 6;
+            const isToday = sameDay(date, today);
+            const isSelected = selected && sameDay(date, selected);
+            const tasks = tasksOnDay(date);
+            const dots = tasks.slice(0, 3);
+
             return (
-              <div key={section}>
-                {/* Section header */}
-                <div style={{ backgroundColor: COLORS.navy, height: 26 }} className="flex items-center">
-                  <span
-                    className="text-[11px] font-semibold uppercase tracking-wide"
-                    style={{ position: 'sticky', left: 0, color: '#fff', paddingLeft: 10, paddingRight: 10, backgroundColor: COLORS.navy }}
-                  >
-                    {section}
-                  </span>
-                </div>
-
-                {rows.map((t) => {
-                  const left = dayDiff(min, parseDate(t.start)) * PX_PER_DAY;
-                  const span = dayDiff(parseDate(t.start), parseDate(t.end)) + 1;
-                  const width = Math.max(span * PX_PER_DAY, 16);
-                  const color = colorOf(t);
-                  return (
-                    <div key={t.id} className="flex items-center" style={{ height: ROW_H, borderBottom: `0.5px solid ${COLORS.border}` }}>
-                      <div
-                        style={{ width: LABEL_W, position: 'sticky', left: 0, background: '#fff', zIndex: 2 }}
-                        className="flex items-center pr-2"
-                      >
-                        <span className="text-[11px] truncate" style={{ color: COLORS.ink }}>{t.label}</span>
-                      </div>
-                      <div style={{ width: trackWidth, position: 'relative', height: '100%' }}>
-                        {/* month gridlines */}
-                        {months.map((m, i) => (
-                          <div key={i} className="absolute top-0 bottom-0" style={{ left: m.x, width: 1, backgroundColor: '#f3f4f6' }} />
-                        ))}
-                        <button
-                          onClick={() => setSelected(t)}
-                          className="absolute"
-                          style={{
-                            left,
-                            width,
-                            top: (ROW_H - 18) / 2,
-                            height: 18,
-                            borderRadius: 6,
-                            backgroundColor: color,
-                            opacity: t.done ? 0.45 : 1,
-                          }}
-                          aria-label={t.label}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <button
+                key={i}
+                onClick={() => setSelected(isSelected ? null : date)}
+                className="flex flex-col items-center pt-2"
+                style={{ borderTop: `0.5px solid ${COLORS.border}`, minHeight: 56 }}
+              >
+                <span
+                  className="flex items-center justify-center text-[16px]"
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: '9999px',
+                    backgroundColor: isSelected ? COLORS.red : 'transparent',
+                    color: isSelected
+                      ? '#fff'
+                      : isToday
+                        ? COLORS.red
+                        : isWeekend
+                          ? COLORS.muted
+                          : COLORS.ink,
+                    fontWeight: isToday || isSelected ? 600 : 400,
+                  }}
+                >
+                  {d}
+                </span>
+                <span className="flex items-center gap-0.5 mt-0.5" style={{ height: 6 }}>
+                  {dots.map((t, di) => (
+                    <span
+                      key={di}
+                      style={{
+                        width: 5, height: 5, borderRadius: '9999px',
+                        backgroundColor: isSelected ? '#fff' : colorOf(t),
+                        opacity: t.done ? 0.4 : 1,
+                      }}
+                    />
+                  ))}
+                </span>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* Detail popover */}
+      {/* Selected day detail (expands below) */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-end" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }} onClick={() => setSelected(null)}>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full bg-white rounded-t-2xl p-5"
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)' }}
-          >
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: colorOf(selected) }} />
-                <h2 className="text-[16px] font-semibold" style={{ color: COLORS.ink }}>{selected.label}</h2>
-              </div>
-              <button onClick={() => setSelected(null)} style={{ color: COLORS.muted }}><X size={20} /></button>
+        <div className="mt-4">
+          <SectionLabel>
+            {WEEKDAYS_FULL[selected.getDay()]}, {MONTH_NAMES[selected.getMonth()]} {selected.getDate()}
+          </SectionLabel>
+          {selectedTasks.length === 0 ? (
+            <div
+              className="rounded-[10px] px-3 py-4 text-[13px] text-center"
+              style={{ border: `0.5px solid ${COLORS.border}`, color: COLORS.muted }}
+            >
+              Nothing scheduled this day.
             </div>
-            <div className="text-[13px]" style={{ color: COLORS.muted }}>
-              {selected.section} · {formatRange(selected.start, selected.end)}
-              {selected.episode ? ` · Episode ${selected.episode}` : ''}
+          ) : (
+            <div className="space-y-2">
+              {selectedTasks.map((t) => (
+                <div
+                  key={t.id}
+                  className="flex items-center gap-3 rounded-[10px] px-3 py-2.5"
+                  style={{ border: `0.5px solid ${COLORS.border}` }}
+                >
+                  <span style={{ width: 5, height: 34, borderRadius: 3, backgroundColor: colorOf(t), flexShrink: 0 }} />
+                  <div className="flex-1 min-w-0">
+                    <div
+                      className="text-[14px] font-medium"
+                      style={{ color: t.done ? COLORS.muted : COLORS.ink, textDecoration: t.done ? 'line-through' : 'none' }}
+                    >
+                      {t.label}
+                    </div>
+                    <div className="text-[11px]" style={{ color: COLORS.muted }}>
+                      {t.section} · {formatRange(t.start, t.end)}{t.episode ? ` · Ep ${t.episode}` : ''}
+                    </div>
+                  </div>
+                  {t.section === 'Interviews' && (
+                    <button onClick={() => toggleDone(t.id)} aria-label="Toggle done" style={{ color: t.done ? '#16a34a' : COLORS.muted }}>
+                      {t.done ? <CheckCircle2 size={20} /> : <Circle size={20} />}
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
-            {selected.section === 'Interviews' && (
-              <button
-                onClick={() => { toggleDone(selected.id); setSelected({ ...selected, done: !selected.done }); }}
-                className="mt-4 w-full rounded-[10px] text-[14px] font-semibold"
-                style={{
-                  height: 44,
-                  border: `0.5px solid ${COLORS.border}`,
-                  backgroundColor: selected.done ? '#dcfce7' : '#fff',
-                  color: selected.done ? '#16a34a' : COLORS.ink,
-                }}
-              >
-                {selected.done ? '✓ Done' : 'Mark as done'}
-              </button>
-            )}
-          </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
+const WEEKDAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
